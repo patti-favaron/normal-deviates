@@ -1,8 +1,14 @@
 /*
 
-Dlang implementation of ziggurat random number generator.
+A dlang implementation of ziggurat random number generator.
 
-This is a port of John Burkardt's "ziggurat.c" and "ziggurat.h".                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+Conceptually, this is a port of John Burkardt's "ziggurat.c"
+and "ziggurat.h". Besides dlang translation, I've introduced
+an object interface, and rationalized things all over.
+
+Author:
+
+    Patrizia Favaron
 
 Credit:
 
@@ -46,21 +52,26 @@ module ziggurat;
 
 import std.math;
 import std.conv;
+import std.stdio;
 
 struct RandomDeviates {
 
+    // Normal distribution scaling parameters
+    float mu;
+    float sigma;
+
     // Internal data for exponential generator
-    uint[256]  ke;
-    float[256] fe;
-    float[256] we;
+    private uint[256]  ke;
+    private float[256] fe;
+    private float[256] we;
 
     // Internal data for normal generator
-    uint[128]  kn;
-    float[128] fn;
-    float[128] wn;
+    private uint[128]  kn;
+    private float[128] fn;
+    private float[128] wn;
 
     // Constructor
-    this() {
+    this(float rMu, float rSigma) {
 
         // Initialize data for exponential generator
         int i;
@@ -116,7 +127,12 @@ struct RandomDeviates {
             this.wn[i] = to!float(dn / m1);
         }
 
+        // Assign normal distribution scaling parameters
+        this.mu    = rMu;
+        this.sigma = rSigma;
+
     }
+
 
     // Simple linear congruential generator
     uint congruential(ref uint i) {
@@ -155,9 +171,9 @@ struct RandomDeviates {
 
         uint value = jsr;
 
-        jsr = pow(jsr, (jsr << 13));
-        jsr = pow(jsr, (jsr >> 17));
-        jsr = pow(jsr, (jsr <<  5));
+        jsr = xor(jsr, (jsr << 13));
+        jsr = xor(jsr, (jsr >> 17));
+        jsr = xor(jsr, (jsr <<  5));
 
         value += jsr;
         return value;
@@ -225,10 +241,12 @@ struct RandomDeviates {
         float x;
         float y;
 
-        hz = to!int(this.shr3(jsr));
+        // All this to convert from uint to int without std.conv raising
+        // an overflow for large values
+        hz = to_int(this.shr3(jsr));
         iz = (hz & 127);
 
-        if(fabs(hz) < this.kn[iz])
+        if(fabs(to!float(hz)) < this.kn[iz])
         {
             value = to!float(hz) * this.wn[iz];
         }
@@ -268,10 +286,10 @@ struct RandomDeviates {
                     break;
                 }
 
-                hz = to!int(this.shr3(jsr));
+                hz = to_int(this.shr3(jsr));
                 iz = ( hz & 127 );
 
-                if(fabs(hz) < this.kn[iz])
+                if(fabs(to!float(hz)) < this.kn[iz])
                 {
                     value = to!float(hz) * this.wn[iz];
                     break;
@@ -291,13 +309,32 @@ struct RandomDeviates {
 
         jsr_input = jsr;
 
-        jsr = pow(jsr, (jsr << 13));
-        jsr = pow(jsr, (jsr >> 17));
-        jsr = pow(jsr, (jsr <<  5));
+        jsr = xor(jsr, (jsr << 13));
+        jsr = xor(jsr, (jsr >> 17));
+        jsr = xor(jsr, (jsr <<  5));
 
         value = fmod(0.5 + to!float(jsr_input + jsr) / 65536.0 / 65536.0, 1.0);
 
         return value;
+    }
+
+
+    // Bitwise XOR operator, as '^' in C
+    uint xor(uint a, uint b)
+    {
+        return (a | b) & (~(a & b));
+    }
+
+
+    int to_int(uint value)
+    {
+        uint sign = value & 0b10000000000000000000000000000000;
+        int pos_value = to!int(value & 0b01111111111111111111111111111111);
+        if(sign != 0)
+        {
+            pos_value |= 0b10000000000000000000000000000000;
+        }
+        return pos_value;
     }
 
 }
