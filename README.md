@@ -90,13 +90,31 @@ Module 'pmnrg' is purpose-built, to support the realization of Lagrangian partic
 
 That said, code is not formally restricted to 2x2 and 3x3 covariance matrices: it may be used in any case, at least in principle. I made no effort to test with cases larger than 3x3 however: use at your own risk!
 
-## Why MIT open-source license?
+## Why the MIT open-source license, and not something else?
 
-A final word about open-source licensing. I decided to use the rather permissive MIT license in this case, because the code you are reading was written with me in the role of thesis supervisor. As such, it was intended for my cubs' and anyone else's use. I cannot of course guarantee my code is absolutely correct (I did my best to write and test it correctly), and assume anyone wishing to use it has enough intelligence and preparation to understand whether it fulfils their own necessities.
+A final word about open-source licensing. I decided to use the permissive MIT license in this case, because the code you are reading was written with me in the role of thesis co-supervisor. As such, this code was intended for my cubs' and anyone else's use.
 
-On the other side, I admit not being obsessed with open-source "purity" and similar things, looking quite ideological to my simple and down-to-earth mind. I'm sure I've missed something in the overall debate, and would be sincerely grateful to anyone taking their time to illuminate it. In the same time, I objectively have no need to be remembered as a developer-of-the-past when I'll be passed out. And, very strongly feel that writing code is (or _should_ be) an act of care, with no degree of contriction or any other form of violence built-in. Besides, there is more than enough of it in this rough time.
+Distributing it as open-source was then out of question.
 
-For these reasons I decided to _not_ use any variant of GPL license. That's positively fully intentional.
+But then, _which_ open-source license?
+
+Possibilities abound, some very popular as the GPL.
+
+I'm not a lawyer, and can't really appreciate their subtleties in full. Yet I made some research, but before I tried to clarify what is the final purpose of this work (the same considerations apply to many others I've done).
+
+As far as I've understood, licenses like the GPL contain an obligation. Any user of GPL licensed code should release their work under the same GPL license. Commercial use is not allowed. I realize this may be a push to enlarge the open-source code base more and more.
+
+But on the other side, I feel at unease forcing others to adopt any method (and a license is just a special case) I could like. I can guess this code is far from originality, but yet it's useful. And usefulness is its very reason to be: surely I will never be remembered as one of the "coders of the past" when I'll pass out, nor imagining to become feels relevant to my being.
+
+Quite on the contrary, a code is an expression of a will in a specific moment (ultimately of love). Is, in itself, a form of care. Or, I wish it to be.
+
+And so, building constrictions into it would be, well, _limiting_. One other crippling forms of little violence, one more attempt to control others' lifes and possibilities. This is definitely not what _I_ would wish to a son or a daughter, would I happen to have one. And sure, the World abounds in little and big violences: adding one more would have had been decidedly not an amelioration.
+
+Reading the text of the GPL I got the impression it's imbued of an idea of open-source "purity", with quite ad ideological flavor to my simple and down-to-earth tastes. I'm sure I've missed something in the overall debate, and would be sincerely grateful to anyone taking their time to illuminate it. Yet I understand licensing this work under the GPL would not be in my cubs best interest.
+
+For these reasons I decided to _not_ use any variant of GPL license, and opt for the MIT's.
+
+That's positively fully intentional, and longly thought.
 
 Thanks,
 Patrizia
