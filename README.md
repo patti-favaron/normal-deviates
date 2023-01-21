@@ -30,26 +30,35 @@ The value of N must be positive; the case N=1 is admitted, meaning univariate da
 
 The 'get' function yields an integer return code, with the following values:
 
-0.  Successful completion: multivariate normal deviates generated
-1.  Attempt made to use a non-initialized generator
-2.  N = size(rvMean) <= 0 (valid values should be positive)
-3.  size(rmCov, dim=1) /= N (should be 'N')
-4.  size(rmCov, dim=2) /= N (should be 'N')
-5.  size(rmData, dim=1) /= N (should be 'N')
-6.  size(rmData, dim=2) <= 0 (should be positive)
-7.  Matrix 'rmCov' is not symmetric
-8.  Matrix 'rmCov' is not positive definite
+0.  Successful completion: multivariate normal deviates generated.
+1.  Attempt made to use a non-initialized generator.
+2.  N = size(rvMean) <= 0 (valid values should be positive).
+3.  size(rmCov, dim=1) /= N (should be 'N').
+4.  size(rmCov, dim=2) /= N (should be 'N').
+5.  size(rmData, dim=1) /= N (should be 'N').
+6.  size(rmData, dim=2) <= 0 (should be positive).
+7.  Matrix 'rmCov' is not symmetric.
+8.  Matrix 'rmCov' is not positive definite.
 
 ## Credits
 
-As a module, "pmnrg" univariate normal generator is a Fortran translation of the ZIGNOR code by J.A. Doornik, in "An Improved Ziggurat Method to Generate Normal Random Samples", as I've found it in https://www.doornik.com/research/ziggurat.pdf.
+As a module, "pmnrg" univariate normal generator is a translation of the ZIGNOR code by prof. J.A. Doornik, described in "An Improved Ziggurat Method to Generate Normal Random Samples", as I've found it in https://www.doornik.com/research/ziggurat.pdf.
 
-Translation was performed quite "aggressively", employing a bit of Fortran 2003 and more, doing my best to ease the users' life up a little bit.
+Translation was performed quite "aggressively", employing a bit of Fortran 2003 and using some object-oriented programming in sake of ease of use and clarity. Nonetheless, the important variable names have been retained to permit readers to feel familiar with prof. Doornik's report.
 
-Choice of Ziggurat method instead of, say, the selection procedure shown in D.E. Knuth, "The Art of Computer Programming", volume 2, "Seminumerical Algorithms", is due to Ziggurat's higher computational efficiency. This "may" matter in the use case of interest to Patrizia, where possibly millions or billions deviates need to be generated: a tiny time saving may have then a deep impact on overall
-feasibility of the process at hand.
+## Rationale of having selected the Ziggurat method
 
-What's really of use is not the unifariate generator, but the multi-variate. This has been coded in a straightforward way, using direct Cholesky decomposition, the latter calculated as shown in G.H. Golub, C.F. van Loan, "Matrix Computations", 3rd edition, John Hopkins University Press. Using Cholesky decomposition makes a lot of sense, the covariance matrix being positive definite, in which case the Cholesky decomposition is guaranteed to exist. Cholesky decomposition is also reputed for its numerical stability, and does not require pivoting steps.
+Choice of Ziggurat method instead of, say, the selection procedure shown in D.E. Knuth, "The Art of Computer Programming", volume 2, "Seminumerical Algorithms", is due to Ziggurat's higher computational efficiency.
+
+This "may" matter in the use case of interest to Patrizia, where possibly millions or billions deviates need to be generated: a tiny time saving may have then a deep impact on overall feasibility of the process at hand.
+
+## Reference use cases
+
+Function 'Ziggurat' is a univariate generator, and is not directly accessible to users within 'pmnrg' module. The really accessible generator is the multi-variate one, 'get', explained above.
+
+The implementation is straightforward. Let's assume $$ M $$ represents the means vector, and $$ C $$ the covariance matrix.
+
+This has been coded in a straightforward way, using direct Cholesky decomposition, the latter calculated as shown in G.H. Golub, C.F. van Loan, "Matrix Computations", 3rd edition, John Hopkins University Press. Using Cholesky decomposition makes a lot of sense, the covariance matrix being positive definite, in which case the Cholesky decomposition is guaranteed to exist. Cholesky decomposition is also reputed for its numerical stability, and does not require pivoting steps.
 
 Incidentally, "pmnrg" means "Patti's Minimalistic Normal Random Generator". It is purpose-built, supporting the realization of Lagrangian particle dispersion models in two and three dimensions. That is to say, I have been quite brutal in my code writing, and used no libraries - LAPACK being a first-idea-jumping-to-mind. No libraries means no dependencies, and easier to deploy code base...
 
