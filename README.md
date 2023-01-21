@@ -52,18 +52,41 @@ Choice of Ziggurat method instead of, say, the selection procedure shown in D.E.
 
 This "may" matter in the use case of interest to Patrizia, where possibly millions or billions deviates need to be generated: a tiny time saving may have then a deep impact on overall feasibility of the process at hand.
 
-## Reference use cases
+## Theory of operation
 
 Function 'Ziggurat' is a univariate generator, and is not directly accessible to users within 'pmnrg' module. The really accessible generator is the multi-variate one, 'get', explained above.
 
-The implementation is straightforward. Let's assume $$ M $$ represents the means vector, and $$ C $$ the covariance matrix.
+The implementation is straightforward. Let's assume 'M' represents the means vector, and 'C' the covariance matrix ('M' and 'C' should be known before invoking the generator). Then the multivariate normal deviates are obtained as
 
-This has been coded in a straightforward way, using direct Cholesky decomposition, the latter calculated as shown in G.H. Golub, C.F. van Loan, "Matrix Computations", 3rd edition, John Hopkins University Press. Using Cholesky decomposition makes a lot of sense, the covariance matrix being positive definite, in which case the Cholesky decomposition is guaranteed to exist. Cholesky decomposition is also reputed for its numerical stability, and does not require pivoting steps.
+    r = M + u*L
+    
+where 'u' is a vector of normally distributed values with mean 0 and standard deviation 1, and 'L' the lower matrix of C Cholesky decomposition (L Transpose(L) = C). Then it can be shown (prof. Doornik does) that 'r' is normally distributed with means 'M' and covariances 'C'.
 
-Incidentally, "pmnrg" means "Patti's Minimalistic Normal Random Generator". It is purpose-built, supporting the realization of Lagrangian particle dispersion models in two and three dimensions. That is to say, I have been quite brutal in my code writing, and used no libraries - LAPACK being a first-idea-jumping-to-mind. No libraries means no dependencies, and easier to deploy code base...
+The covariance matrix 'C' is positive definite and symmetric, so the Cholesky factorization 'L' is guaranteed to exist.
 
-I could have used LU decomposition instead, but in that case pivoting and permutators would have had made my code trickier, harder to understand, and (marginally) less computationally efficient. I'm decidedly _not_ a genius, and anyone like me will appreciate my quest for simplicity. Besides, using LU decomposition would had demanded a tricky nitty-gritty code I sincerely have no time to conceive and debug: use of library code would have then be absolutely advisable in that case as an error-preventing
-approach.
+Cholesky decomposition has been coded using Algorithm 4.2.1 in G.H. Golub, C.F. van Loan, "Matrix Computations", 3rd edition, John Hopkins University Press, page 144.
+
+In a sense, computing the Cholesky decomposition is the matrix equivalent of extracting a square root. The previous formula can then be seen as a matrix analogous of the univariate scaling
+
+    r = mu + u*sigma
+    
+with 'sigma' the standard deviation, that is, the square root of variance.
+
+## Advantages of Cholesky decomposition
+
+The Cholesky decomposition is just one of the many decompositions available, the LU decomposition among these.
+
+Before to begin coding, I've done some evaluations of competing methods, and Cholesky decomposition emerged as the clear winner - at least among the methods I've heard of when a college girl.
+
+Indeed using Cholesky decomposition makes a lot of sense: as mentioned in the previous section the covariance matrix is positive definite and symmetric, so the Cholesky decomposition exists by necessity. Cholesky decomposition is also reputed for its numerical stability, and does not require pivoting steps.
+
+The lack of pivoting steps has the interesting consequence that matrix rows are not rearranged as they would be using e.g. LU decomposition. I've considered the need to rearrange decomposition results before to rescale the deviates quite _obscuring_, a very good reason to avoid it.
+
+Last, but not least, Cholesky decomposition is very efficient compared to other methods. This is not a critical point, the matrix decomposition being computed only once for each generation step. But it does not harm...
+
+## Reference use cases
+
+Module 'pmnrg' is purpose-built, to support the realization of Lagrangian particle dispersion models in two and three dimensions. That is to say, I have been quite brutal in my code writing, and paid no attention to large matrices. A larger scale implementation would require consideration of roundoff, maybe not severe because of the method stability, yet to consider: use of professionally-developed libraries like LAPACK would be advisable in case. And, I did not do...
 
 That said, code is not formally restricted to 2x2 and 3x3 covariance matrices: it may be used in any case, at least in principle. I made no effort to test with cases larger than 3x3 however: use at your own risk!
 
