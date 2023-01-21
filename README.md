@@ -20,6 +20,26 @@ Please remember to assign the type value after declaration, to ensure the type-b
     
 Not doing so will cause the 'get' function to terminate in error.
 
+The 'pmnrg' module contains an only public function, invoked as
+
+        iRetCode = tRand % get(rvMean, rmCov, rmData)
+        
+where 'rvMean' is a length-N vector containing the means, 'rmCov' is the order-N covariance matrix, and 'rmData' a NxK matrix containing on successful exit the desired random deviates.
+
+The value of N must be positive; the case N=1 is admitted, meaning univariate data series.
+
+The 'get' function yields an integer return code, with the following values:
+
+0.  Successful completion: multivariate normal deviates generated
+1.  Attempt made to use a non-initialized generator
+2.  N = size(rvMean) <= 0 (valid values should be positive)
+3.  size(rmCov, dim=1) /= N (should be 'N')
+4.  size(rmCov, dim=2) /= N (should be 'N')
+5.  size(rmData, dim=1) /= N (should be 'N')
+6.  size(rmData, dim=2) <= 0 (should be positive)
+7.  Matrix 'rmCov' is not symmetric
+8.  Matrix 'rmCov' is not positive definite
+
 ## Credits
 
 As a module, "pmnrg" univariate normal generator is a Fortran translation of the ZIGNOR code by J.A. Doornik, in "An Improved Ziggurat Method to Generate Normal Random Samples", as I've found it in https://www.doornik.com/research/ziggurat.pdf.
