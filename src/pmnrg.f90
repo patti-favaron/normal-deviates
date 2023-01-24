@@ -19,7 +19,7 @@
 ! DEALINGS IN THE SOFTWARE.
 !
 ! -------------------------------------------------------------------------------------------------
-
+!
 module pmnrg
     
     implicit none
@@ -288,7 +288,7 @@ contains
                 end do
             end if
             rDenom = A(j,j)
-            if(rDenom < 1.d-6) then
+            if(abs(rDenom) < 1.0d-12) then
                 ! Matrix is not definite positive!
                 iRetCode = 3
                 return
