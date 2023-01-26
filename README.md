@@ -24,9 +24,9 @@ The 'pmnrg' module contains an only public function, invoked as
 
         iRetCode = tRand % get(rvMean, rmCov, rmData)
         
-where 'rvMean' is a length-N vector containing the means, 'rmCov' is the order-N covariance matrix, and 'rmData' a NxK matrix containing on successful exit the desired random deviates.
+where 'rvMean' is a length-N vector containing the means, 'rmCov' is the order-N covariance matrix, and 'rmData' a KxN matrix containing on successful exit the desired random deviates.
 
-The value of N must be positive; the case N=1 is admitted, meaning univariate data series.
+The value of N must be positive; the case N=1 is admitted, meaning univariate data series. K must be positive, with typical values 2 and 3 in the author's application.
 
 The 'get' function yields an integer return code, with the following values:
 
@@ -35,8 +35,8 @@ The 'get' function yields an integer return code, with the following values:
 2.  N = size(rvMean) <= 0 (valid values should be positive).
 3.  size(rmCov, dim=1) /= N (should be 'N').
 4.  size(rmCov, dim=2) /= N (should be 'N').
-5.  size(rmData, dim=1) /= N (should be 'N').
-6.  size(rmData, dim=2) <= 0 (should be positive).
+5.  size(rmData, dim=2) /= N (should be 'N').
+6.  size(rmData, dim=1) <= 0 (should be positive).
 7.  Matrix 'rmCov' is not symmetric.
 8.  Matrix 'rmCov' is not positive definite.
 
