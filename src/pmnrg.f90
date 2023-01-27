@@ -105,9 +105,9 @@ contains
     !
     !   4   size(rmCov, dim=2) /= n (should be 'n')
     !
-    !   5   size(rmData, dim=1) /= n (should be 'n')
+    !   5   size(rmData, dim=2) /= n (should be 'n')
     !
-    !   6   size(rmData, dim=2) <= 0 (should be positive)
+    !   6   size(rmData, dim=1) <= 0 (should be positive)
     !
     !   7   matrix 'rmCov' is not symmetric
     !
@@ -119,8 +119,8 @@ contains
         class(MultiNormalGenerator), intent(in) :: this     ! This function's class
         real(8), dimension(:), intent(in)       :: rvMean   ! 'n'-dimensioned vector containing means
         real(8), dimension(:,:), intent(in)     :: rmCov    ! 'n' x 'n' matrix containing covariances
-        real(8), dimension(:,:), intent(out)    :: rmData   ! 'n' x 'm' matrix containing random deviates
-                                                            ! (column-wise, one data vector per column)
+        real(8), dimension(:,:), intent(out)    :: rmData   ! 'm' x 'n' matrix containing random deviates
+                                                            ! (row-wise, one data vector per column)
         integer                                 :: iRetCode ! Return code
         
         ! Locals
@@ -155,11 +155,11 @@ contains
             iRetCode = 4
             return
         end if
-        if(size(rmData, dim=1) /= n) then
+        if(size(rmData, dim=2) /= n) then
             iRetCode = 5
             return
         end if
-        if(size(rmData, dim=2) <= 0) then
+        if(size(rmData, dim=1) <= 0) then
             iRetCode = 6
             return
         end if
@@ -190,13 +190,13 @@ contains
         ! Extract random sample with 0 mean and unit standard deviation
         do i = 1, n
             do j = 1, k
-                rmData(i,j) = this % Ziggurat()
+                rmData(j,i) = this % Ziggurat()
             end do
         end do
         
         ! Apply transformation
         do j = 1,k
-            rmData(:,j) = rvMean + matmul(rmL, rmData(:,j))
+            rmData(j,:) = rvMean + matmul(rmL, rmData(j,:))
         end do
         
         ! Leave
