@@ -30,14 +30,13 @@ program t_pmnrg
     real(8), dimension(:), allocatable      :: rvMean
     real(8), dimension(:,:), allocatable    :: rmData
     real(8), dimension(:,:), allocatable    :: rmCov
-    real(8), dimension(:,:), allocatable    :: rmRandom
     integer                                 :: iRetCode
     integer                                 :: i, j
     type(MultiNormalGenerator)              :: tRand
     
     ! Test 1: non-initialized value
     print *, 'Test 1 - Non-initialized generator'
-    allocate(rvMean(3), rmCov(3,3), rmData(3,1024))
+    allocate(rvMean(3), rmCov(3,3), rmData(1024,3))
     rvMean = 0.0d0
     rmCov  = 0.0d0
     iRetCode = tRand % get(rvMean, rmCov, rmData)
@@ -50,7 +49,7 @@ program t_pmnrg
     
     ! Test 2: null means vector
     print *, 'Test 2 - Null means vector'
-    allocate(rvMean(0), rmCov(3,3), rmData(3,1024))
+    allocate(rvMean(0), rmCov(3,3), rmData(1024,3))
     rvMean = 0.0d0
     rmCov  = 0.0d0
     iRetCode = tRand % get(rvMean, rmCov, rmData)
@@ -59,7 +58,7 @@ program t_pmnrg
     
     ! Test 3: non-square covariance matrix
     print *, 'Test 3 - Non conformable covariances matrix, case 1'
-    allocate(rvMean(3), rmCov(3,4), rmData(3,1024))
+    allocate(rvMean(3), rmCov(3,4), rmData(1024,3))
     rvMean = 0.0d0
     rmCov  = 0.0d0
     iRetCode = tRand % get(rvMean, rmCov, rmData)
@@ -68,7 +67,7 @@ program t_pmnrg
     
     ! Test 4: non-square covariance matrix
     print *, 'Test 4 - Non conformable covariances matrix, case 2'
-    allocate(rvMean(3), rmCov(3,2), rmData(3,1024))
+    allocate(rvMean(3), rmCov(3,2), rmData(1024,3))
     rvMean = 0.0d0
     rmCov  = 0.0d0
     iRetCode = tRand % get(rvMean, rmCov, rmData)
@@ -77,7 +76,7 @@ program t_pmnrg
     
     ! Test 5: non-square covariance matrix
     print *, 'Test 5 - Non conformable covariances matrix, case 3'
-    allocate(rvMean(3), rmCov(4,3), rmData(3,1024))
+    allocate(rvMean(3), rmCov(4,3), rmData(1024,3))
     rvMean = 0.0d0
     rmCov  = 0.0d0
     iRetCode = tRand % get(rvMean, rmCov, rmData)
@@ -86,7 +85,7 @@ program t_pmnrg
     
     ! Test 6: non-square covariance matrix
     print *, 'Test 6 - Non conformable covariances matrix, case 4'
-    allocate(rvMean(3), rmCov(2,3), rmData(3,1024))
+    allocate(rvMean(3), rmCov(2,3), rmData(1024,3))
     rvMean = 0.0d0
     rmCov  = 0.0d0
     iRetCode = tRand % get(rvMean, rmCov, rmData)
@@ -95,7 +94,7 @@ program t_pmnrg
     
     ! Test 7: non-square covariance matrix
     print *, 'Test 7 - Non conformable covariances matrix, case 5'
-    allocate(rvMean(3), rmCov(2,6), rmData(3,1024))
+    allocate(rvMean(3), rmCov(2,6), rmData(1024,3))
     rvMean = 0.0d0
     rmCov  = 0.0d0
     iRetCode = tRand % get(rvMean, rmCov, rmData)
@@ -104,7 +103,7 @@ program t_pmnrg
     
     ! Test 8: non-conformable data matrix
     print *, 'Test 8 - Non conformable data matrix, case 1'
-    allocate(rvMean(3), rmCov(3,3), rmData(2,1024))
+    allocate(rvMean(3), rmCov(3,3), rmData(1024,2))
     rvMean = 0.0d0
     rmCov  = 0.0d0
     iRetCode = tRand % get(rvMean, rmCov, rmData)
@@ -113,7 +112,7 @@ program t_pmnrg
 
     ! Test 9: non-conformable data matrix
     print *, 'Test 9 - Non conformable data matrix, case 2'
-    allocate(rvMean(3), rmCov(3,3), rmData(4,1024))
+    allocate(rvMean(3), rmCov(3,3), rmData(1024,4))
     rvMean = 0.0d0
     rmCov  = 0.0d0
     iRetCode = tRand % get(rvMean, rmCov, rmData)
@@ -122,7 +121,7 @@ program t_pmnrg
 
     ! Test 10: null data vectors
     print *, 'Test 10 - Non conformable data matrix, case 2'
-    allocate(rvMean(3), rmCov(3,3), rmData(3,0))
+    allocate(rvMean(3), rmCov(3,3), rmData(0,3))
     rvMean = 0.0d0
     rmCov  = 0.0d0
     iRetCode = tRand % get(rvMean, rmCov, rmData)
@@ -131,12 +130,12 @@ program t_pmnrg
 
     ! Test 11: non-symmetric matrix
     print *, 'Test 11 - Nonsymmetric covariance matrix'
-    allocate(rvMean(3), rmCov(3,3), rmData(3,1024))
+    allocate(rvMean(3), rmCov(3,3), rmData(1024,3))
     call random_number(rmData)
     do i = 1, 3
         rvMean(i) = sum(rmData(i,:)) / 1024.0d0
         do j = i, 3
-            rmCov(i,j) = sum((rmData(i,:)-rvMean(i))*(rmData(j,:)-rvMean(j)))/1024.0d0
+            rmCov(i,j) = sum((rmData(:,i)-rvMean(i))*(rmData(:,j)-rvMean(j)))/1024.0d0
             if(i /= j) rmCov(j,i) = rmCov(i,j)
         end do
     end do
@@ -147,12 +146,12 @@ program t_pmnrg
 
     ! Test 12: non positive-definite matrix
     print *, 'Test 12 - Non positive-definite covaiance matrix'
-    allocate(rvMean(3), rmCov(3,3), rmData(3,1024))
+    allocate(rvMean(3), rmCov(3,3), rmData(1024,3))
     call random_number(rmData)
     do i = 1, 3
         rvMean(i) = sum(rmData(i,:)) / 1024.0d0
         do j = i, 3
-            rmCov(i,j) = sum((rmData(i,:)-rvMean(i))*(rmData(j,:)-rvMean(j)))/1024.0d0
+            rmCov(i,j) = sum((rmData(:,i)-rvMean(i))*(rmData(:,j)-rvMean(j)))/1024.0d0
             if(i /= j) rmCov(j,i) = rmCov(i,j)
         end do
     end do
@@ -163,12 +162,12 @@ program t_pmnrg
 
     ! Test 13: non positive-definite matrix
     print *, 'Test 13 - Correct data'
-    allocate(rvMean(3), rmCov(3,3), rmData(3,1024*1024))
+    allocate(rvMean(3), rmCov(3,3), rmData(1024*1024,3))
     call random_number(rmData)
     do i = 1, 3
-        rvMean(i) = sum(rmData(i,:)) / (1024.0d0 * 1024.0d0)
+        rvMean(i) = sum(rmData(:,i)) / (1024.0d0 * 1024.0d0)
         do j = i, 3
-            rmCov(i,j) = sum((rmData(i,:)-rvMean(i))*(rmData(j,:)-rvMean(j)))/(1024.0d0 * 1024.0d0)
+            rmCov(i,j) = sum((rmData(:,i)-rvMean(i))*(rmData(:,j)-rvMean(j)))/(1024.0d0 * 1024.0d0)
             if(i /= j) rmCov(j,i) = rmCov(i,j)
         end do
     end do
@@ -183,7 +182,7 @@ program t_pmnrg
     open(10,file="data.csv", status="unknown", action="write")
     write(10, "('x, y, z')")
     do j = 1, 1024*1024
-        write(10, "(f9.6, 2(',',f9.6))") rmData(1,j), rmData(2,j), rmData(3,j)
+        write(10, "(f9.6, 2(',',f9.6))") rmData(j,1), rmData(j,2), rmData(j,3)
     end do
     close(10)
     deallocate(rvMean, rmCov, rmData)
