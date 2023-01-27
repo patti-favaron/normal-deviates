@@ -120,7 +120,7 @@ contains
         real(8), dimension(:), intent(in)       :: rvMean   ! 'n'-dimensioned vector containing means
         real(8), dimension(:,:), intent(in)     :: rmCov    ! 'n' x 'n' matrix containing covariances
         real(8), dimension(:,:), intent(out)    :: rmData   ! 'm' x 'n' matrix containing random deviates
-                                                            ! (row-wise, one data vector per column)
+                                                            ! (row-wise, one data vector per row)
         integer                                 :: iRetCode ! Return code
         
         ! Locals
@@ -288,7 +288,7 @@ contains
                 end do
             end if
             rDenom = A(j,j)
-            if(abs(rDenom) < 1.0d-12) then
+            if(rDenom < 1.d-6) then
                 ! Matrix is not definite positive!
                 iRetCode = 3
                 return
