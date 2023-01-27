@@ -105,9 +105,9 @@ contains
     !
     !   4   size(rmCov, dim=2) /= n (should be 'n')
     !
-    !   5   size(rmData, dim=1) /= n (should be 'n')
+    !   5   size(rmData, dim=2) /= n (should be 'n')
     !
-    !   6   size(rmData, dim=2) <= 0 (should be positive)
+    !   6   size(rmData, dim=1) <= 0 (should be positive)
     !
     !   7   matrix 'rmCov' is not symmetric
     !
