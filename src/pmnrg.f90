@@ -159,7 +159,8 @@ contains
             iRetCode = 5
             return
         end if
-        if(size(rmData, dim=1) <= 0) then
+        k = size(rmData, dim=1)
+        if(k <= 0) then
             iRetCode = 6
             return
         end if
